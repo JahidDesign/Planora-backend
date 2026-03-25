@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum EventType {
+  PUBLIC
+  PRIVATE
+}
+
+enum ParticipantStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  BANNED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id                String       @id @default(cuid())
+  name              String
+  email             String       @unique
+  password          String
+  role              Role         @default(USER)
+  avatar            String?
+  bio               String?
+  notificationsEnabled Boolean   @default(true)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  eventsCreated     Event[]      @relation("EventOrganizer")
+  participations    Participant[]
+  invitationsSent   Invitation[] @relation("InvitationSender")
+  invitationsReceived Invitation[] @relation("InvitationReceiver")
+  reviews           Review[]
+  payments          Payment[]
+}
+
+model Event {
+  id            String      @id @default(cuid())
+  title         String
+  description   String
+  date          DateTime
+  endDate       DateTime?
+  venue         String?
+  eventLink     String?
+  type          EventType   @default(PUBLIC)
+  fee           Float       @default(0)
+  capacity      Int?
+  imageUrl      String?
+  isFeatured    Boolean     @default(false)
+  category      String?
+  isDeleted     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  organizerId   String
+  organizer     User        @relation("EventOrganizer", fields: [organizerId], references: [id])
+
+  participants  Participant[]
+  invitations   Invitation[]
+  reviews       Review[]
+  payments      Payment[]
+}
+
+model Participant {
+  id          String            @id @default(cuid())
+  status      ParticipantStatus @default(PENDING)
+  joinedAt    DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  userId      String
+  user        User              @relation(fields: [userId], references: [id])
+  eventId     String
+  event       Event             @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model Invitation {
+  id          String           @id @default(cuid())
+  status      InvitationStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  senderId    String
+  sender      User             @relation("InvitationSender", fields: [senderId], references: [id])
+  receiverId  String
+  receiver    User             @relation("InvitationReceiver", fields: [receiverId], references: [id])
+  eventId     String
+  event       Event            @relation(fields: [eventId], references: [id])
+
+  @@unique([receiverId, eventId])
+}
+
+model Review {
+  id          String    @id @default(cuid())
+  rating      Int       // 1-5
+  comment     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  editableUntil DateTime
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  eventId     String
+  event       Event     @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  amount          Float
+  currency        String        @default("USD")
+  status          PaymentStatus @default(PENDING)
+  stripePaymentId String?
+  stripeSessionId String?
+  metadata        Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  eventId         String
+  event           Event         @relation(fields: [eventId], references: [id])
+}
