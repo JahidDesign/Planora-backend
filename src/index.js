@@ -10,6 +10,7 @@ dotenv.config();
 
 import authRoutes from './routes/auth.routes.js';
 import eventRoutes from './routes/event.routes.js';
+import blogRoutes from './routes/blog.routes.js';
 import userRoutes from './routes/user.routes.js';
 import participantRoutes from './routes/participant.routes.js';
 import invitationRoutes from './routes/invitation.routes.js';
@@ -71,6 +72,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/my-blogs', blogRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/invitations', invitationRoutes);
