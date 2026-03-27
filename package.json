@@ -17,8 +17,9 @@
     "seed": "node src/utils/seed.js"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.19.2",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.6",
     "dotenv": "^16.4.5",
@@ -35,6 +36,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7",
-    "prisma": "^7.5.0"
+    "prisma": "^6.19.2"
   }
 }
