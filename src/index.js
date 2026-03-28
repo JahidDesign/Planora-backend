@@ -87,6 +87,7 @@ app.listen(PORT, () => {
   console.log(`Planora Server running on http://localhost:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
   console.log(`Database: Connected via Prisma`);
+  console.log('JWT_SECRET:', process.env.JWT_SECRET);
 });
 
 export default app;
