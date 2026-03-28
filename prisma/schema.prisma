@@ -164,11 +164,15 @@ model Blog {
   title       String
   slug        String   @unique
   content     String
+  excerpt     String?
   coverImage  String?
+  imageUrl    String?
   category    String?
+  tags        String[]
   views       Int      @default(0)
   isFeatured  Boolean  @default(false)
   isPublished Boolean  @default(true)
+  publishedAt DateTime?
   isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
