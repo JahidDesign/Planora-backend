@@ -10,7 +10,7 @@ import {
   getMyBlogs,
 } from '../controllers/blog.controller.js';
 
-import { authenticate, optionalAuth } from '../middlewares/auth.middleware.js';
+import { protect, optionalAuth } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
@@ -44,18 +44,25 @@ const blogValidation = [
 
 /* ======================================================
    Routes
+   NOTE: router is mounted at /api/my-blogs in app.ts
+   So:
+     GET  /api/my-blogs         → getBlogs  (all public blogs)
+     GET  /api/my-blogs/mine    → getMyBlogs (logged-in user's blogs)
+     GET  /api/my-blogs/:slug   → getBlog   (single blog by slug)
+     POST /api/my-blogs         → createBlog
+     PUT  /api/my-blogs/:id     → updateBlog
+     DEL  /api/my-blogs/:id     → deleteBlog
 ====================================================== */
 
+// ✅ Static routes MUST come before /:slug param route
 router.get('/', optionalAuth, getBlogs);
+router.get('/mine', protect, getMyBlogs);
 
-router.get('/my-blogs', authenticate, getMyBlogs);
+// ✅ Dynamic slug route comes last
+router.get('/:slug', optionalAuth, getBlog);
 
-router.get('/:id', optionalAuth, getBlog);
-
-router.post('/', authenticate, blogValidation, createBlog);
-
-router.put('/:id', authenticate, blogValidation, updateBlog);
-
-router.delete('/:id', authenticate, deleteBlog);
+router.post('/', protect, blogValidation, createBlog);
+router.put('/:id', protect, updateBlog);
+router.delete('/:id', protect, deleteBlog);
 
 export default router;

@@ -1,12 +1,12 @@
 import express from 'express';
-import { authenticate, authorize } from '../middlewares/auth.middleware.js';
+import { protect, authorize } from '../middlewares/auth.middleware.js';
 import {
   getStats, getAllUsers, deleteUser, updateUserRole,
   getAllEvents, setFeaturedEvent
 } from '../controllers/admin.controller.js';
 
 const router = express.Router();
-router.use(authenticate, authorize('ADMIN'));
+router.use(protect, authorize('ADMIN'));
 
 router.get('/stats', getStats);
 router.get('/users', getAllUsers);

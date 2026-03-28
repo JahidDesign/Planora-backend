@@ -1,13 +1,13 @@
 import express from 'express';
-import { authenticate } from '../middlewares/auth.middleware.js';
+import { protect } from '../middlewares/auth.middleware.js';
 import {
   sendInvitation, getMyInvitations, acceptInvitation, declineInvitation
 } from '../controllers/invitation.controller.js';
 
 const router = express.Router();
-router.post('/', authenticate, sendInvitation);
-router.get('/my', authenticate, getMyInvitations);
-router.patch('/:id/accept', authenticate, acceptInvitation);
-router.patch('/:id/decline', authenticate, declineInvitation);
+router.post('/', protect, sendInvitation);
+router.get('/my', protect, getMyInvitations);
+router.patch('/:id/accept', protect, acceptInvitation);
+router.patch('/:id/decline', protect, declineInvitation);
 
 export default router;

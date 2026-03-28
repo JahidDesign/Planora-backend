@@ -1047,9 +1047,9 @@ async function main() {
       },
     });
   }
-  console.log(`✅ Created ${blogs.length} blog posts`);
+  console.log(` Created ${blogs.length} blog posts`);
 
-  console.log('\n🎉 Seed complete!');
+  console.log('\n Seed complete!');
   console.log('─'.repeat(45));
   console.log('👤 Admin:  jahid@planora.dev   / jahid@1234');
   console.log('👤 User 1: nilima@example.com  / User@1234');

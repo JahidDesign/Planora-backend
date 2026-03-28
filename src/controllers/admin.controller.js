@@ -1,8 +1,6 @@
 import prisma from '../utils/prisma.js';
 
-// @desc    Get dashboard stats
-// @route   GET /api/admin/stats
-// @access  Admin
+
 export const getStats = async (req, res) => {
   const [totalUsers, totalEvents, totalParticipants, totalPayments] = await Promise.all([
     prisma.user.count(),
@@ -36,9 +34,6 @@ export const getStats = async (req, res) => {
   });
 };
 
-// @desc    Get all users
-// @route   GET /api/admin/users
-// @access  Admin
 export const getAllUsers = async (req, res) => {
   const { search, page = 1, limit = 20 } = req.query;
   const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -68,9 +63,7 @@ export const getAllUsers = async (req, res) => {
   res.json({ users, pagination: { page: parseInt(page), limit: parseInt(limit), total } });
 };
 
-// @desc    Delete user account
-// @route   DELETE /api/admin/users/:id
-// @access  Admin
+
 export const deleteUser = async (req, res) => {
   const { id } = req.params;
 

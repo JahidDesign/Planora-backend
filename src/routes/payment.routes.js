@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate } from '../middlewares/auth.middleware.js';
+import { protect } from '../middlewares/auth.middleware.js';
 import {
   createCheckoutSession, stripeWebhook,
   getMyPayments, verifyPayment
@@ -8,8 +8,8 @@ import {
 const router = express.Router();
 // Webhook must use raw body — handled in index.js before express.json()
 router.post('/webhook', stripeWebhook);
-router.post('/create-session', authenticate, createCheckoutSession);
-router.get('/my', authenticate, getMyPayments);
-router.get('/verify/:eventId', authenticate, verifyPayment);
+router.post('/create-session', protect, createCheckoutSession);
+router.get('/my', protect, getMyPayments);
+router.get('/verify/:eventId', protect, verifyPayment);
 
-export default router;
+export default router; 

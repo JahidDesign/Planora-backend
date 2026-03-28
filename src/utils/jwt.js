@@ -1,17 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-export const generateAccessToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-  });
-};
+const ACCESS_EXPIRES = '15m';
+const REFRESH_EXPIRES = '7d';
 
-export const generateRefreshToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-  });
-};
-
+// Must NOT wrap in try/catch — let errors propagate
+// so middleware can read err.name (TokenExpiredError, JsonWebTokenError)
 export const verifyAccessToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
@@ -20,16 +13,23 @@ export const verifyRefreshToken = (token) => {
   return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 };
 
-export const generateTokenPair = (user) => {
-  const payload = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    name: user.name,
-  };
-
-  const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken({ id: user.id });
-
-  return { accessToken, refreshToken };
+export const generateAccessToken = (user) => {
+  return jwt.sign(
+    { id: user.id, email: user.email, role: user.role, name: user.name },
+    process.env.JWT_SECRET,
+    { expiresIn: ACCESS_EXPIRES }
+  );
 };
+
+export const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user.id },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: REFRESH_EXPIRES }
+  );
+};
+
+export const generateTokenPair = (user) => ({
+  accessToken: generateAccessToken(user),
+  refreshToken: generateRefreshToken(user),
+});

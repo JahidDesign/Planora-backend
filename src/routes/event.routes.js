@@ -4,7 +4,7 @@ import {
   getEvents, getEvent, getFeaturedEvent, createEvent,
   updateEvent, deleteEvent, getMyEvents, getEventParticipants
 } from '../controllers/event.controller.js';
-import { authenticate, optionalAuth } from '../middlewares/auth.middleware.js';
+import { protect, optionalAuth } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
@@ -18,11 +18,11 @@ const eventValidation = [
 
 router.get('/', optionalAuth, getEvents);
 router.get('/featured', getFeaturedEvent);
-router.get('/my-events', authenticate, getMyEvents);
+router.get('/my-events', protect, getMyEvents);
 router.get('/:id', optionalAuth, getEvent);
-router.get('/:id/participants', authenticate, getEventParticipants);
-router.post('/', authenticate, eventValidation, createEvent);
-router.put('/:id', authenticate, eventValidation, updateEvent);
-router.delete('/:id', authenticate, deleteEvent);
+router.get('/:id/participants', protect, getEventParticipants);
+router.post('/', protect, eventValidation, createEvent);
+router.put('/:id', protect, eventValidation, updateEvent);
+router.delete('/:id', protect, deleteEvent);
 
 export default router;
